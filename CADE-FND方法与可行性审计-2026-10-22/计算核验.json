@@ -1,0 +1,84 @@
+{
+  "scope": "Deterministic arithmetic and constructed counterexamples only. No model or dataset experiment.",
+  "units": "Natural logarithms; GiB=2**30 bytes.",
+  "anchor_counterexample": {
+    "observed_anchor_index": 0,
+    "p_support": [
+      0.9,
+      0.1
+    ],
+    "p_conflict": [
+      0.1,
+      0.9
+    ],
+    "masked_distribution": [
+      0.5,
+      0.5
+    ],
+    "entropy_support": 0.3250829733914482,
+    "entropy_conflict": 0.3250829733914482,
+    "js_support": 0.10174922507919681,
+    "js_conflict": 0.10174922507919681,
+    "signed_log_support": 0.5877866649021191,
+    "signed_log_conflict": -1.6094379124341003
+  },
+  "attention_permutation": {
+    "a": [
+      0.7,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "permutation": [
+      0.1,
+      0.1,
+      0.7,
+      0.1
+    ],
+    "entropy_a": 0.9404479886553263,
+    "entropy_permutation": 0.9404479886553263
+  },
+  "relu_zero_case": {
+    "a": [
+      0.05,
+      0.05
+    ],
+    "null": [
+      0.1,
+      0.1
+    ],
+    "positive_residual": [
+      0,
+      0
+    ],
+    "normalized_sum_with_epsilon": 0,
+    "pseudo_entropy": 0,
+    "verdict": "Invalid probability distribution; mark missing, not confident."
+  },
+  "qwen7b_full_attention_gib_assumptions": {
+    "layers": 28,
+    "batch": 1,
+    "query_heads": 28,
+    "bytes_per_element": 2,
+    "excludes": "weights, logits, softmax workspaces, visual encoder, allocator, CUDA"
+  },
+  "qwen7b_full_attention_gib": {
+    "512": 0.3828125,
+    "1024": 1.53125,
+    "2048": 6.125,
+    "4096": 24.5
+  },
+  "normal_approximation_independent_two_group_80pct_power": {
+    "n_each": 50,
+    "two_sided_alpha": 0.05,
+    "detectable_standardized_difference": 0.5603170436225936,
+    "caveat": "normal approximation only; clustered samples, multiple testing and test selection need separate treatment"
+  },
+  "independent_null_multiple_test_illustration": {
+    "tests": 84,
+    "alpha_each": 0.05,
+    "at_least_one_false_positive": 0.9865481243423165,
+    "caveat": "illustration under independence, not actual correlated layer-wise familywise error"
+  },
+  "input_attachment_sha256": "9f9a4d601dfea60bc2f8516528fc0298bba8c4adbbfad2083e9d09e531bad834"
+}
