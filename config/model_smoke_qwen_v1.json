@@ -1,0 +1,11 @@
+{
+  "experiment_stage": "engineering",
+  "model_dir": "models/Qwen2.5-VL-7B-Instruct",
+  "quantization": "bnb4",
+  "max_pixels": 200704,
+  "max_new_tokens": 768,
+  "seed": 42,
+  "pilot_config": "config/pilot_qwen_direct_image_text_v1.json",
+  "claim_id": "train:111",
+  "output_dir": "outputs/model_smoke/qwen-bnb4-v1"
+}

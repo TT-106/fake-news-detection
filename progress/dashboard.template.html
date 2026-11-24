@@ -1,0 +1,2664 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' fill='%23edf2e9' stroke='%232b6553'/%3E%3Cpath d='M10 10h12M10 16h9M10 22h12' stroke='%232b6553'/%3E%3C/svg%3E"
+    />
+    <title>研究进度册 · 多模态虚假信息检测</title>
+    <style>
+      :root {
+        --paper: #f1f3ed;
+        --ink: #233d37;
+        --muted: #596b62;
+        --line: rgba(52, 79, 63, 0.17);
+        --green: #2b6553;
+        --soft: #e1ebe0;
+        --amber: #825c2b;
+        --red: #92473d;
+        --serif:
+          "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun",
+          Georgia, serif;
+        --mono: Consolas, monospace;
+        --radius: 3px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 30px;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: 16px;
+        line-height: 1.7;
+        background:
+          radial-gradient(ellipse at 78% 12%, #d8e5db 0, transparent 39%),
+          radial-gradient(ellipse at 37% 63%, #e5dfc9 0, transparent 38%),
+          var(--paper);
+        background-attachment: fixed;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      button,
+      a,
+      select,
+      summary {
+        touch-action: manipulation;
+      }
+      button,
+      select,
+      summary {
+        cursor: pointer;
+      }
+      button {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 9px 16px;
+        min-height: 44px;
+        background: rgba(255, 255, 255, 0.45);
+        transition:
+          background 0.18s,
+          border-color 0.18s;
+      }
+      button:hover {
+        background: #fff;
+        border-color: var(--green);
+      }
+      button.primary {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff;
+      }
+      button.primary:hover {
+        background: #234f42;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+        text-underline-offset: 5px;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      summary:focus-visible {
+        outline: 2px solid var(--green);
+        outline-offset: 4px;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      h1,
+      h2,
+      h3 {
+        font-weight: 500;
+      }
+      h2 {
+        font-size: 25px;
+        letter-spacing: 0.06em;
+      }
+      h3 {
+        font-size: 18px;
+      }
+      small,
+      .small {
+        font-size: 13px;
+      }
+      p {
+        overflow-wrap: anywhere;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      .eyebrow {
+        font-family: Georgia, var(--serif);
+        letter-spacing: 0.16em;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .label {
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        box-shadow: 0 8px 36px rgba(38, 65, 43, 0.025);
+      }
+      .frame {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.65);
+        border-radius: var(--radius);
+      }
+      .frame:before,
+      .frame:after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+        border-color: #66816c;
+        border-style: solid;
+        z-index: 1;
+      }
+      .frame:before {
+        left: -1px;
+        top: -1px;
+        border-width: 1px 0 0 1px;
+      }
+      .frame:after {
+        right: -1px;
+        bottom: -1px;
+        border-width: 0 1px 1px 0;
+      }
+      .rail {
+        width: 215px;
+        height: 100vh;
+        position: fixed;
+        inset: 0 auto 0 0;
+        padding: 36px 26px;
+        background: rgba(238, 243, 235, 0.68);
+        border-right: 1px solid var(--line);
+        backdrop-filter: blur(24px);
+        display: flex;
+        flex-direction: column;
+        z-index: 5;
+      }
+      .brand-mark {
+        border: 1px solid #6d8977;
+        width: 39px;
+        height: 39px;
+        display: grid;
+        place-items: center;
+        font-size: 24px;
+        margin-bottom: 18px;
+      }
+      .brand {
+        font-size: 20px;
+        letter-spacing: 0.12em;
+      }
+      .brand-sub {
+        font-size: 11px;
+        letter-spacing: 0.13em;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .rail nav {
+        display: grid;
+        gap: 7px;
+        margin-top: 55px;
+      }
+      .rail nav a {
+        padding: 11px 10px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 14px;
+        white-space: nowrap;
+        position: relative;
+      }
+      .rail nav a span {
+        font-size: 11px;
+        color: #728373;
+        font-family: Georgia, serif;
+      }
+      #web-pilot[hidden],
+      #web-pilot-nav[hidden] {
+        display: none;
+      }
+      .rail nav a.active {
+        background: rgba(64, 100, 74, 0.08);
+        color: var(--green);
+      }
+      .rail nav a.active:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 13px;
+        bottom: 13px;
+        width: 2px;
+        background: var(--green);
+      }
+      .rail-foot {
+        margin-top: auto;
+        font-size: 12px;
+        color: var(--muted);
+        padding-top: 25px;
+        border-top: 1px solid var(--line);
+      }
+      .live-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        margin-right: 8px;
+      }
+      .main {
+        margin-left: 215px;
+        padding: 28px 44px 45px;
+        max-width: 1700px;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 22px;
+      }
+      .breadcrumb {
+        font-size: 12px;
+        letter-spacing: 0.05em;
+      }
+      .breadcrumb span {
+        padding: 0 10px;
+        color: #86958b;
+      }
+      .toolbar {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+      }
+      .date {
+        font-size: 12px;
+        margin-right: 12px;
+        color: var(--muted);
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr;
+        gap: 36px;
+        align-items: center;
+        padding: 40px 0 27px;
+      }
+      .hero h1 {
+        font-size: clamp(28px, 2.6vw, 41px);
+        line-height: 1.5;
+        letter-spacing: 0.07em;
+        margin: 10px 0 13px;
+      }
+      .hero p {
+        font-size: 14px;
+        color: var(--muted);
+        max-width: 560px;
+        line-height: 1.9;
+      }
+      .status-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        border: 1px solid #c2cdbb;
+        padding: 3px 10px;
+        color: #4a6048;
+        background: rgba(234, 239, 226, 0.65);
+      }
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 20px 0;
+      }
+      .hero-stat {
+        padding: 0 18px;
+        border-left: 1px solid var(--line);
+      }
+      .hero-stat:first-child {
+        border-left: 0;
+      }
+      .big-number {
+        font-family: Georgia, var(--serif);
+        font-size: 45px;
+        line-height: 1.3;
+        letter-spacing: -0.04em;
+      }
+      .big-number small {
+        font-size: 16px;
+        letter-spacing: 0;
+        color: var(--muted);
+        margin-left: 5px;
+      }
+      .hero-stat p {
+        font-size: 12px;
+        margin-top: 5px;
+      }
+      .notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 14px 18px;
+        background: rgba(229, 226, 203, 0.45);
+        border-left: 2px solid #a18e5f;
+        font-size: 13px;
+        color: #605a40;
+      }
+      .notice strong {
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .section {
+        margin-top: 37px;
+        scroll-margin-top: 25px;
+      }
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+      .section-head .eyebrow {
+        margin-bottom: 5px;
+      }
+      .section-note {
+        font-size: 12px;
+        color: var(--muted);
+        max-width: 420px;
+        text-align: right;
+      }
+      .section-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .overview-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1fr;
+        gap: 20px;
+      }
+      .chart-card {
+        padding: 24px;
+      }
+      .overview-grid > * {
+        min-width: 0;
+      }
+      .chart-card .card-head {
+        flex-wrap: wrap;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+      }
+      .card-head h3 {
+        letter-spacing: 0.04em;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        line-height: 1.6;
+        white-space: nowrap;
+        padding: 3px 9px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.4);
+      }
+      .chip.blocked,
+      .chip.failed,
+      .chip.invalid,
+      .chip.withdrawn {
+        color: var(--red);
+        border-color: #d5bcb2;
+        background: rgba(247, 236, 227, 0.65);
+      }
+      .chip.partial,
+      .chip.diagnostic,
+      .chip.unreviewed,
+      .chip.not_reproduced {
+        color: var(--amber);
+        background: rgba(244, 236, 212, 0.65);
+        border-color: #d7ccae;
+      }
+      .chip.implemented,
+      .chip.completed,
+      .chip.reproduced {
+        color: var(--green);
+        background: rgba(217, 234, 218, 0.6);
+        border-color: #b5cbbb;
+      }
+      .chart-controls {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 21px;
+      }
+      .field {
+        display: grid;
+        gap: 4px;
+        font-size: 11px;
+        color: var(--muted);
+        min-width: 0;
+      }
+      .field select {
+        width: 100%;
+        min-width: 0;
+      }
+      select,
+      input[type="search"] {
+        min-height: 40px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid var(--line);
+        padding: 6px 10px;
+        border-radius: 2px;
+        font-size: 13px;
+        max-width: 100%;
+      }
+      .field.grow {
+        flex: 1;
+        min-width: 170px;
+      }
+      .chart-tabs {
+        display: flex;
+        gap: 16px;
+        margin-top: 19px;
+        border-bottom: 1px solid var(--line);
+      }
+      .chart-tabs button {
+        border: 0;
+        border-radius: 0;
+        background: none;
+        padding: 8px 0;
+        font-size: 12px;
+        min-height: 38px;
+        color: var(--muted);
+      }
+      .chart-tabs button.selected {
+        color: var(--green);
+        border-bottom: 2px solid var(--green);
+      }
+      .chart-wrap {
+        position: relative;
+        min-height: 255px;
+        margin-top: 10px;
+      }
+      .chart-wrap svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .chart-wrap .empty {
+        position: absolute;
+        left: 14%;
+        right: 5%;
+        top: 24%;
+        bottom: 20%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: rgba(248, 250, 244, 0.78);
+        backdrop-filter: blur(3px);
+        padding: 16px;
+      }
+      .empty-title {
+        font-size: 19px;
+        letter-spacing: 0.06em;
+      }
+      .empty-note {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+        max-width: 370px;
+      }
+      .chart-legend {
+        display: flex;
+        gap: 16px;
+        font-size: 11px;
+        color: var(--muted);
+        align-items: center;
+        flex-wrap: wrap;
+        min-height: 27px;
+      }
+      .chart-legend > span {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+      .legend-stroke {
+        display: inline-block;
+        width: 18px;
+        border-top: 2px solid var(--green);
+        margin-right: 7px;
+        vertical-align: middle;
+      }
+      .legend-stroke.baseline {
+        border-color: #a17a46;
+        border-top-style: dashed;
+      }
+      .chart-rule {
+        overflow-wrap: anywhere;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .priority-card {
+        padding: 24px;
+      }
+      .priority-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+      }
+      .blocker {
+        border-top: 1px solid var(--line);
+        padding: 14px 0;
+      }
+      .blocker:first-child {
+        border-top: 0;
+      }
+      .blocker-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+      }
+      .severity {
+        font-size: 10px;
+        font-family: var(--mono);
+        color: var(--red);
+        padding-top: 4px;
+      }
+      .blocker-title {
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .blocker p {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .text-button {
+        border: 0;
+        background: none;
+        padding: 6px 0;
+        min-height: 36px;
+        color: var(--green);
+        font-size: 12px;
+        text-align: left;
+      }
+      .modules {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 17px;
+      }
+      .module {
+        padding: 21px;
+        min-width: 0;
+      }
+      .module-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 9px;
+        align-items: center;
+      }
+      .module-number {
+        font-size: 12px;
+        font-family: Georgia, serif;
+        color: #74836d;
+      }
+      .module h3 {
+        font-size: 17px;
+        margin-top: 15px;
+      }
+      .module-scope {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+        min-height: 60px;
+      }
+      .progress-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-top: 17px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .progress-meta strong {
+        font-family: Georgia, serif;
+        font-size: 22px;
+        color: var(--ink);
+        font-weight: 400;
+      }
+      .progress-track {
+        height: 3px;
+        background: #dbe2d6;
+        margin-top: 7px;
+      }
+      .progress-track i {
+        display: block;
+        height: 100%;
+        background: #6b8e73;
+      }
+      .module-next {
+        font-size: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        margin-top: 15px;
+        color: var(--muted);
+      }
+      .module-next span {
+        color: var(--ink);
+      }
+      details {
+        font-size: 12px;
+      }
+      summary {
+        min-height: 36px;
+        padding: 8px 0;
+        color: var(--green);
+      }
+      .checks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .checks li {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        margin: 6px 0;
+        color: var(--muted);
+      }
+      .check {
+        font-family: Arial, sans-serif;
+        width: 15px;
+        color: var(--green);
+        flex-shrink: 0;
+      }
+      .evidence {
+        font-family: var(--mono);
+        font-size: 11px;
+        line-height: 1.6;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .evidence b {
+        font-family: var(--serif);
+        font-weight: 400;
+      }
+      .table-card {
+        padding: 6px 21px 15px;
+      }
+      .table-scroll {
+        width: 100%;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 13px;
+      }
+      th {
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        font-weight: 400;
+        color: var(--muted);
+        padding: 15px 12px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      td {
+        padding: 16px 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      td:first-child,
+      th:first-child {
+        padding-left: 0;
+      }
+      td:last-child,
+      th:last-child {
+        padding-right: 0;
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      .table-name {
+        font-size: 14px;
+      }
+      .table-note {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 4px;
+        max-width: 470px;
+      }
+      .table-empty {
+        text-align: center;
+        padding: 38px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .split-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .data-card {
+        padding: 24px;
+      }
+      .data-counts {
+        display: flex;
+        gap: 30px;
+        margin-top: 18px;
+      }
+      .data-counts strong {
+        font-size: 30px;
+        font-family: Georgia, var(--serif);
+        font-weight: 400;
+        line-height: 1.3;
+      }
+      .data-counts span {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .data-card p {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 13px;
+      }
+      .metadata {
+        display: grid;
+        grid-template-columns: 130px 1fr;
+        font-size: 12px;
+        gap: 10px;
+        margin: 19px 0 0;
+      }
+      .metadata dt {
+        color: var(--muted);
+      }
+      .metadata dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+      .records-toolbar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .records-toolbar input {
+        flex: 1;
+        min-width: 160px;
+      }
+      .record-count {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .record-detail {
+        font-size: 12px;
+        line-height: 1.9;
+        padding: 4px 0 9px;
+        max-width: 720px;
+      }
+      .record-detail dl {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 5px;
+        margin: 6px 0;
+      }
+      .record-detail dt {
+        color: var(--muted);
+      }
+      .record-detail dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        padding: 27px;
+      }
+      .milestone {
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+        position: relative;
+      }
+      .milestone:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: -4px;
+        width: 7px;
+        height: 7px;
+        background: #9cab94;
+        outline: 5px solid #ecf1e9;
+      }
+      .milestone.active:before {
+        background: var(--green);
+      }
+      .milestone .eyebrow {
+        font-size: 10px;
+      }
+      .milestone h3 {
+        font-size: 15px;
+        margin-top: 11px;
+      }
+      .milestone p {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 9px;
+      }
+      .persistence {
+        margin-top: 28px;
+        padding: 20px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 22px;
+      }
+      .persistence h3 {
+        font-size: 16px;
+      }
+      .persistence p {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 28px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+      }
+      .footer p {
+        max-width: 650px;
+      }
+      dialog {
+        border: 1px solid #b9cbb7;
+        border-radius: 4px;
+        padding: 30px;
+        background: #f6f7f0;
+        color: var(--ink);
+        font-family: var(--serif);
+        max-width: min(740px, calc(100vw - 30px));
+        max-height: 85vh;
+        overflow: auto;
+        box-shadow: 0 30px 100px #24403330;
+      }
+      dialog::backdrop {
+        background: #233d3760;
+        backdrop-filter: blur(5px);
+      }
+      .dialog-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 16px;
+      }
+      .dialog-head button {
+        padding: 5px 12px;
+      }
+      .dialog-body {
+        font-size: 14px;
+      }
+      .dialog-body p {
+        margin: 12px 0;
+      }
+      .dialog-body pre {
+        font-family: var(--mono);
+        font-size: 12px;
+        background: #e7ede3;
+        padding: 15px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        line-height: 1.8;
+      }
+      .dialog-body ol {
+        padding-left: 24px;
+      }
+      .dialog-body li {
+        margin: 13px 0;
+      }
+      .dialog-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+      .toast {
+        position: fixed;
+        bottom: 25px;
+        left: calc(50% + 100px);
+        transform: translateX(-50%);
+        background: #294e40;
+        color: #fff;
+        padding: 11px 20px;
+        font-size: 13px;
+        box-shadow: 0 6px 25px #233d3722;
+        z-index: 20;
+        max-width: 80vw;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .mobile-brand {
+        display: none;
+      }
+      .zero {
+        color: var(--muted);
+      }
+      .all-blockers {
+        margin-top: 16px;
+        padding: 18px 24px;
+      }
+      .all-blockers[hidden] {
+        display: none;
+      }
+      .legend-color {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-right: 6px;
+        border-radius: 50%;
+      }
+      .baseline-select {
+        max-width: 220px;
+      }
+      .metric-value {
+        font-family: Georgia, serif;
+        font-size: 16px;
+      }
+      .table-value {
+        white-space: nowrap;
+      }
+      .improvement {
+        color: var(--green);
+        font-size: 11px;
+        margin-left: 6px;
+      }
+      .audit-stamp {
+        font-family: Georgia, serif;
+      }
+      .review-note {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      @media (min-width: 1700px) {
+        .main {
+          margin-right: auto;
+          margin-left: 215px;
+          padding-left: 65px;
+          padding-right: 65px;
+        }
+      }
+      @media (max-width: 1200px) {
+        .rail {
+          width: 180px;
+          padding: 30px 19px;
+        }
+        .main {
+          margin-left: 180px;
+          padding: 25px 27px;
+        }
+        .hero {
+          gap: 20px;
+        }
+        .hero-stat {
+          padding: 0 11px;
+        }
+        .big-number {
+          font-size: 38px;
+        }
+        .modules {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .overview-grid {
+          grid-template-columns: 1.6fr 1fr;
+        }
+        .chart-card,
+        .priority-card {
+          padding: 19px;
+        }
+        .timeline {
+          gap: 17px;
+          padding: 22px;
+        }
+      }
+      @media (max-width: 920px) {
+        .rail {
+          width: 150px;
+          padding: 25px 15px;
+        }
+        .brand {
+          font-size: 17px;
+        }
+        .rail nav a {
+          gap: 9px;
+          padding-left: 6px;
+        }
+        .main {
+          margin-left: 150px;
+          padding: 23px;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .hero-stats {
+          max-width: none;
+        }
+        .hero-stat {
+          padding: 0 20px;
+        }
+        .overview-grid {
+          grid-template-columns: 1fr;
+        }
+        .priority-card #priority-list {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 18px;
+        }
+        .blocker {
+          border-top: 0;
+        }
+        .priority-card .blocker p {
+          font-size: 11px;
+        }
+        .split-grid {
+          grid-template-columns: 1fr;
+        }
+        .date {
+          display: none;
+        }
+        .timeline {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .section-note {
+          max-width: 260px;
+        }
+        .toast {
+          left: 55%;
+        }
+      }
+      @media (max-width: 650px) {
+        html {
+          scroll-padding-top: 78px;
+        }
+        .rail {
+          position: sticky;
+          top: 0;
+          width: 100%;
+          height: auto;
+          padding: 0;
+          background: rgba(240, 244, 235, 0.94);
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .brand-mark,
+        .brand,
+        .brand-sub,
+        .rail-foot {
+          display: none;
+        }
+        .rail nav {
+          display: flex;
+          gap: 0;
+          margin: 0;
+          overflow: auto;
+          padding: 0 9px;
+        }
+        .rail nav a {
+          padding: 14px 11px;
+          font-size: 12px;
+          gap: 0;
+          min-height: 48px;
+        }
+        .rail nav a span {
+          display: none;
+        }
+        .rail nav a.active:before {
+          top: auto;
+          bottom: 0;
+          left: 11px;
+          right: 11px;
+          width: auto;
+          height: 2px;
+        }
+        .main {
+          margin: 0;
+          padding: 21px 17px 30px;
+        }
+        .mobile-brand {
+          display: block;
+          font-size: 14px;
+          letter-spacing: 0.08em;
+        }
+        .breadcrumb {
+          display: none;
+        }
+        .topbar {
+          padding-bottom: 16px;
+          gap: 12px;
+        }
+        .toolbar button {
+          font-size: 11px;
+          padding: 7px 10px;
+        }
+        .hero {
+          padding: 25px 0 22px;
+        }
+        .hero h1 {
+          font-size: 29px;
+          line-height: 1.55;
+        }
+        .hero p {
+          font-size: 13px;
+        }
+        .hero-stats {
+          padding: 15px 0;
+        }
+        .hero-stat {
+          padding: 0 12px;
+        }
+        .big-number {
+          font-size: 36px;
+        }
+        .big-number small {
+          font-size: 13px;
+        }
+        .hero-stat p {
+          font-size: 11px;
+        }
+        .notice {
+          display: block;
+          padding: 12px 14px;
+          font-size: 12px;
+        }
+        .notice strong {
+          display: block;
+          margin-bottom: 5px;
+        }
+        .section {
+          margin-top: 29px;
+        }
+        .section-head {
+          display: block;
+        }
+        .section-note {
+          text-align: left;
+          max-width: none;
+          margin-top: 8px;
+        }
+        h2 {
+          font-size: 23px;
+        }
+        .chart-card,
+        .priority-card {
+          padding: 18px 15px;
+        }
+        .chart-controls {
+          gap: 8px;
+        }
+        .field.grow {
+          min-width: 140px;
+        }
+        .field {
+          flex: 1;
+          min-width: 120px;
+        }
+        .chart-wrap {
+          min-height: 205px;
+        }
+        .chart-wrap .empty {
+          top: 19%;
+          left: 12%;
+          right: 0;
+          bottom: 15%;
+          padding: 10px;
+        }
+        .empty-title {
+          font-size: 16px;
+        }
+        .empty-note {
+          font-size: 11px;
+          line-height: 1.65;
+        }
+        .priority-card #priority-list {
+          display: block;
+        }
+        .blocker {
+          border-top: 1px solid var(--line);
+          padding: 12px 0;
+        }
+        .modules {
+          grid-template-columns: 1fr;
+        }
+        .module-scope {
+          min-height: 0;
+        }
+        .module {
+          padding: 20px;
+        }
+        .module h3 {
+          margin-top: 10px;
+        }
+        .section-head .toolbar {
+          margin-top: 14px;
+        }
+        .table-card {
+          padding: 0 14px 9px;
+        }
+        table {
+          min-width: 650px;
+        }
+        .table-note {
+          max-width: 300px;
+        }
+        .data-card {
+          padding: 21px;
+        }
+        .timeline {
+          grid-template-columns: 1fr 1fr;
+          gap: 22px;
+          padding: 23px 18px;
+        }
+        .persistence {
+          display: block;
+          padding: 20px;
+        }
+        .persistence button {
+          margin-top: 14px;
+        }
+        .footer {
+          display: block;
+        }
+        .footer .audit-stamp {
+          display: block;
+          margin-top: 10px;
+        }
+        .toast {
+          left: 50%;
+          width: max-content;
+          max-width: 90vw;
+        }
+        .records-toolbar {
+          gap: 8px;
+        }
+        .records-toolbar input {
+          min-width: 150px;
+        }
+        .metadata {
+          grid-template-columns: 100px 1fr;
+        }
+        .card-head {
+          align-items: flex-start;
+        }
+        .card-head h3 {
+          font-size: 16px;
+        }
+        .card-head .chip {
+          font-size: 10px;
+        }
+        .data-counts {
+          gap: 25px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+      @media print {
+        body {
+          background: #fff;
+        }
+        .rail,
+        .toolbar,
+        .chart-controls,
+        .chart-tabs,
+        .records-toolbar,
+        .persistence,
+        .toast {
+          display: none;
+        }
+        .main {
+          margin: 0;
+          padding: 0;
+        }
+        .glass {
+          background: #fff;
+          box-shadow: none;
+          backdrop-filter: none;
+        }
+        .frame {
+          border: 1px solid #ccc;
+        }
+        .module,
+        .chart-card,
+        .priority-card,
+        .data-card,
+        .milestone {
+          break-inside: avoid;
+        }
+        .section {
+          margin-top: 20px;
+        }
+        .modules {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        details:not([open]) {
+          display: none;
+        }
+        .footer {
+          font-size: 9px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="rail" aria-label="研究进度导航">
+      <div class="brand-mark" aria-hidden="true">证</div>
+      <div class="brand">研究进度册</div>
+      <div class="brand-sub">EVIDENCE / RESEARCH LOG</div>
+      <nav>
+        <a href="#overview" class="active"><span>01</span>研究概览</a
+        ><a href="#performance"><span>02</span>性能与基线</a
+        ><a href="#modules"><span>03</span>模块进度</a
+        ><a href="#datasets"><span>04</span>数据与环境</a
+        ><a href="#web-pilot" id="web-pilot-nav" hidden>真实取证</a
+        ><a href="#records"><span>05</span>实验档案</a
+        ><a href="#roadmap"><span>06</span>推进路线</a>
+      </nav>
+      <div class="rail-foot">
+        <div>
+          <i class="live-dot"></i><span id="storage-mode">本地持久档案</span>
+        </div>
+        <p style="margin-top: 10px">以证据记录进展<br />以同口径比较改进</p>
+        <div style="margin-top: 22px" class="eyebrow">PROJECT / 2026</div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumb">
+          多模态虚假信息检测<span>/</span>持续研究档案
+        </div>
+        <div class="mobile-brand">研究进度册</div>
+        <div class="toolbar">
+          <span class="date" id="header-date"></span
+          ><button id="export-json">导出档案 ↓</button
+          ><button class="primary" data-guide>登记新实验 +</button>
+        </div>
+      </header>
+      <section class="hero" id="overview">
+        <div>
+          <div class="eyebrow">
+            MULTIMODAL MISINFORMATION · RESEARCH OBSERVATORY
+          </div>
+          <h1>每一次改进，<br />都有证据可循。</h1>
+          <p id="hero-summary">正在读取研究档案。</p>
+          <p class="small muted" id="stage-summary">先导与正式实验分别计数。</p>
+          <div style="margin-top: 17px">
+            <span class="status-tag" id="readiness">核查中</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="label">有效正式实验</div>
+            <div class="big-number" id="stat-runs">—</div>
+            <p>正式 · 已人工复核</p>
+          </div>
+          <div class="hero-stat">
+            <div class="label">已核验本地对照</div>
+            <div class="big-number" id="stat-baselines">—</div>
+            <p>先导 / 正式分别标注</p>
+          </div>
+          <div class="hero-stat">
+            <div class="label">代码验收项</div>
+            <div class="big-number" id="stat-checks">—</div>
+            <p>逐项核查，非性能</p>
+          </div>
+        </div>
+      </section>
+      <div class="notice">
+        <strong>当前实证边界</strong>
+        <p id="validity-note">
+          正式成绩尚未建立。撤回结果、合成诊断和单元测试分别存档，不进入性能比较。
+        </p>
+      </div>
+      <section class="section" id="performance">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">02 / PERFORMANCE & COMPARISON</div>
+            <h2>性能与基线对照</h2>
+          </div>
+          <p class="section-note">
+            先导标明核验方式，正式实验须人工复核。<br />阶段、划分、模型或预算不同的结果分组展示。
+          </p>
+        </div>
+        <div class="overview-grid">
+          <div class="glass frame chart-card">
+            <div class="card-head">
+              <h3>数据集上的版本演进</h3>
+              <span class="chip" id="chart-count">0 个有效工作点</span>
+            </div>
+            <div class="chart-controls">
+              <label class="field"
+                >数据集<select
+                  id="dataset-filter"
+                  aria-label="性能数据集"
+                ></select></label
+              ><label class="field"
+                >评价指标<select id="metric-filter">
+                  <option value="macro_f1">Macro-F1 ↑</option>
+                  <option value="accuracy">准确率 ↑</option>
+                  <option value="coverage">覆盖率 ↑</option>
+                  <option value="risk">选择性风险 ↓</option>
+                </select></label
+              ><label class="field grow"
+                >可比实验组<select
+                  id="group-filter"
+                  aria-label="可比实验组"
+                ></select
+              ></label>
+            </div>
+            <div class="chart-tabs" role="group" aria-label="曲线视图">
+              <button class="selected" data-view="version" aria-pressed="true">
+                版本演进</button
+              ><button data-view="cost" aria-pressed="false">质量—成本</button>
+            </div>
+            <div
+              class="chart-wrap"
+              id="chart"
+              role="img"
+              aria-label="尚无有效正式实验的性能图"
+            ></div>
+            <div class="chart-legend" id="chart-legend">
+              <span><i class="legend-stroke"></i>本方法 / 消融</span
+              ><span><i class="legend-stroke baseline"></i>已核验本地基线</span>
+            </div>
+            <div class="chart-rule" id="chart-rule"></div>
+            <div style="margin-top: 12px">
+              <label class="field"
+                >对比基线<select
+                  id="compare-baseline"
+                  aria-label="选择同协议复现基线"
+                ></select
+              ></label>
+              <p class="review-note" id="comparison-summary"></p>
+            </div>
+          </div>
+          <aside class="glass frame priority-card">
+            <div class="priority-header">
+              <h3>优先解除的阻塞</h3>
+              <span class="eyebrow" id="blocker-count"></span>
+            </div>
+            <div id="priority-list"></div>
+            <button
+              class="text-button"
+              id="toggle-blockers"
+              aria-expanded="false"
+              aria-controls="all-blockers"
+            >
+              查看全部阻塞项 ↗
+            </button>
+          </aside>
+        </div>
+        <div class="glass frame all-blockers" id="all-blockers" hidden></div>
+        <div style="margin-top: 21px" class="glass frame table-card">
+          <div class="table-scroll">
+            <table>
+              <caption
+                class="small muted"
+                style="text-align: left; padding: 15px 0 0"
+              >
+                本地对照与论文复现清单 · 阶段及核验方式分别标注
+              </caption>
+              <thead>
+                <tr>
+                  <th>比较方法</th>
+                  <th>复现状态</th>
+                  <th>当前证据 / 待完成事项</th>
+                  <th>Macro-F1</th>
+                </tr>
+              </thead>
+              <tbody id="baseline-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="modules">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">03 / IMPLEMENTATION AUDIT</div>
+            <h2>从申请书到实现</h2>
+            <p class="section-sub">
+              完成度 = 已满足的代码验收项 / 该模块验收项；实验验证另行记录。
+            </p>
+          </div>
+          <p class="section-note" id="module-summary"></p>
+        </div>
+        <div class="modules" id="module-cards"></div>
+      </section>
+      <section class="section" id="datasets">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">04 / DATA & REPRODUCIBILITY</div>
+            <h2>数据与运行条件</h2>
+          </div>
+          <p class="section-note" id="audit-date"></p>
+        </div>
+        <div class="split-grid" id="dataset-cards"></div>
+      </section>
+      <section class="section" id="web-pilot" hidden>
+        <div class="section-head">
+          <div>
+            <h2>20 条真实取证先导</h2>
+            <p class="section-sub" id="web-pilot-summary"></p>
+          </div>
+          <p class="section-note">训练集先导 · 前后配对</p>
+        </div>
+        <div class="glass frame table-card">
+          <div class="table-scroll">
+            <table aria-label="逐条真实取证与判定">
+              <thead>
+                <tr><th>图文</th><th>搜到的证据</th><th>来源查到哪一步</th><th>判定前 → 后</th><th>调用与累计耗时</th></tr>
+              </thead>
+              <tbody id="web-pilot-rows"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="review-note" id="web-pilot-note"></p>
+        <p class="review-note"><a id="web-pilot-csv" download>下载逐条记录 CSV</a> · <a id="web-pilot-report">查看原始汇总 JSON</a></p>
+      </section>
+      <section class="section" id="records">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">05 / VERSIONED EXPERIMENT ARCHIVE</div>
+            <h2>每一版，都留下记录</h2>
+            <p class="section-sub">
+              保留完成、失败、诊断和撤回记录；展开查看证据及复现条件。
+            </p>
+          </div>
+          <div class="toolbar">
+            <button id="export-csv">导出运行表 ↓</button>
+          </div>
+        </div>
+        <div class="records-toolbar">
+          <input
+            type="search"
+            id="record-search"
+            placeholder="搜索版本、方法或数据集"
+            aria-label="搜索实验档案"
+          /><select id="status-filter" aria-label="实验状态">
+            <option value="all">全部状态</option>
+            <option value="eligible">可比较 · 已核验</option>
+            <option value="unreviewed">完成 · 待复核</option>
+            <option value="diagnostic">诊断 / 工程核验</option>
+            <option value="withdrawn">已撤回</option>
+            <option value="invalid">证据失效</option>
+            <option value="failed">运行失败</option>
+            <option value="running">运行中</option></select
+          ><span class="record-count" id="record-count"></span>
+        </div>
+        <div class="glass frame table-card">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>版本 / 记录</th>
+                  <th>数据与范围</th>
+                  <th>状态</th>
+                  <th>Macro-F1</th>
+                  <th>日期 / 复现档案</th>
+                </tr>
+              </thead>
+              <tbody id="record-rows"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="review-note">
+          历史档案按原证据保留；“已复核”表示登记者已完成证据审核，文件哈希只保证内容可追踪。
+        </p>
+      </section>
+      <section class="section" id="roadmap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">06 / NEXT MILESTONES</div>
+            <h2>下一步，先打通实证链</h2>
+          </div>
+          <p class="section-note">先完成真实闭环和同口径基线，再评估改进。</p>
+        </div>
+        <div class="glass frame timeline" id="milestones"></div>
+        <div class="glass frame persistence">
+          <div>
+            <h3>这是一份会继续生长的研究档案。</h3>
+            <p>
+              每次实验保存独立记录、配置与产物哈希；重建页面即可更新，历史版本不覆盖。
+            </p>
+          </div>
+          <button data-guide>查看更新与复现流程 ↗</button>
+        </div>
+      </section>
+      <footer class="footer">
+        <p>
+          依据本地申请书、当前源码及实验产物核查。未运行的实验保留为空；代码完成不等于研究结论成立。
+        </p>
+        <span class="audit-stamp" id="build-stamp"></span>
+      </footer>
+    </main>
+    <dialog id="guide-dialog" aria-labelledby="guide-title">
+      <div class="dialog-head">
+        <h2 id="guide-title">持续更新这份档案</h2>
+        <button data-close aria-label="关闭更新指南">关闭 ×</button>
+      </div>
+      <div class="dialog-body">
+        <p>
+          研究数据保存在项目文件中。页面筛选只改变视图，实验记录通过下列命令持久保存。
+        </p>
+        <ol>
+          <li>
+            <strong>准备一版实验清单</strong>
+            <p>
+              复制
+              <code>progress/run.example.json</code
+              >，填写版本、数据集版本、划分、冻结模型、预算、随机种子及产物路径。每个种子和预算工作点使用独立
+              ID。
+            </p>
+          </li>
+          <li>
+            <strong>运行后自动登记</strong>
+            <pre>
+python tools/progress.py run --file progress/my-run.json -- python -m your_experiment</pre>
+            <p>
+              包装器保存日志及退出状态；成功后从规范报告读取指标，失败同样存档。具体报告格式见更新文档。首次入库可标记待复核。
+            </p>
+          </li>
+          <li>
+            <strong>登记已有结果或更新页面</strong>
+            <pre>
+python tools/progress.py record --file progress/my-run.json
+python tools/progress.py build</pre>
+            <p>
+              已存在的 ID
+              不可覆盖。审核报告与逐样本证据后，用以下命令追加复核事件：
+            </p>
+            <pre>
+python tools/progress.py review --id 记录ID --reviewer 审核者 --note 复核说明</pre>
+            <p>
+              先导机器运行核验须显式加
+              <code>--reviewer-kind agent</code>；正式实验仍需
+              <code>human</code> 具名人工复核。
+            </p>
+            <p>
+              撤回使用
+              <code>withdraw --id 记录ID --reason 原因</code>，保留原件。
+            </p>
+          </li>
+          <li>
+            <strong>持续查看</strong>
+            <pre>python tools/progress.py serve --port 8765</pre>
+            <p>
+              打开本机
+              <code>http://127.0.0.1:8765</code
+              >，有档案变化时页面自动更新。也可直接双击根目录的
+              <code>研究进度.html</code> 查看离线快照。
+            </p>
+          </li>
+        </ol>
+        <p>
+          <strong>进入曲线的条件：</strong
+          >完成、对应阶段核验、证据齐全、文件校验通过。先导可由机器核对运行日志、逐样本预测与指标重算，标记“先导·机器核验”；正式实验须具名人工复核。机器运行检查不替代双人科学标注、事件审核或人工引文审计。比较组同时锁定阶段、数据、划分、协议、模型、预算与样本量；不同条件不直接比较。种子记录逐点展示，不冒充均值或置信区间。基线运行通过核验不自动等于忠实复现论文方法。
+        </p>
+        <div class="dialog-actions">
+          <button id="download-template" class="primary">
+            下载空白登记清单</button
+          ><button id="copy-build">复制更新命令</button>
+        </div>
+        <p class="small muted">
+          完整说明：<code>docs/PROGRESS_TRACKING.md</code>。此页不会启动模型、下载权重或调用
+          API。
+        </p>
+      </div>
+    </dialog>
+    <dialog id="detail-dialog" aria-labelledby="detail-title">
+      <div class="dialog-head">
+        <h2 id="detail-title">证据详情</h2>
+        <button data-close aria-label="关闭证据详情">关闭 ×</button>
+      </div>
+      <div id="detail-body" class="dialog-body"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <!-- prettier-ignore -->
+    <script id="progress-data" type="application/json">__PROGRESS_DATA_JSON__</script>
+    <script>
+      "use strict";
+      const DATA = JSON.parse(
+        document.getElementById("progress-data").textContent,
+      );
+      const $ = (s) => document.querySelector(s),
+        $$ = (s) => Array.from(document.querySelectorAll(s));
+      const esc = (x) =>
+        String(x ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const audit = DATA.audit || {},
+        research = DATA.research || {},
+        runs = DATA.runs || [];
+      const historical = (research.historical_runs || []).map((r) => ({
+        ...r,
+        historical: true,
+      }));
+      const allRuns = [...runs, ...historical];
+      const labels = {
+        implemented: "代码已实现",
+        partial: "部分实现",
+        blocked: "受阻",
+        planned: "待实现",
+        completed: "完成",
+        failed: "运行失败",
+        invalid: "证据失效",
+        diagnostic: "诊断 / 核验",
+        withdrawn: "已撤回",
+        running: "运行中",
+        not_reproduced: "未复现",
+        reproduced: "已复现",
+        unreviewed: "待复核",
+        reviewed: "已复核",
+        pending: "待完成",
+      };
+      const chip = (status, text) =>
+        `<span class="chip ${esc(status)}">${esc(text || labels[status] || status)}</span>`;
+      const stageOf = (r) =>
+        r.experiment_stage || (r.historical ? "engineering" : "formal");
+      const reviewerOf = (r) =>
+        r.reviewer_kind || (r.review_status === "reviewed" ? "human" : null);
+      const stageName = (r) =>
+        ({ formal: "正式实验", pilot: "先导非正式", engineering: "工程核验" })[
+          stageOf(r)
+        ] || "未知阶段";
+      const eligible = (r) =>
+        r.eligible === true &&
+        !r.withdrawn &&
+        r.status === "completed" &&
+        r.review_status === "reviewed" &&
+        ((stageOf(r) === "formal" && reviewerOf(r) === "human") ||
+          (stageOf(r) === "pilot" &&
+            ["human", "agent"].includes(reviewerOf(r))));
+      const valid = runs.filter(eligible);
+      const formalValid = valid.filter((r) => stageOf(r) === "formal");
+      const pilotCompleted = runs.filter(
+        (r) =>
+          stageOf(r) === "pilot" &&
+          r.status === "completed" &&
+          !r.withdrawn &&
+          !(r.integrity_issues || []).length,
+      );
+      const pilotValid = valid.filter((r) => stageOf(r) === "pilot");
+      const metricsVisible = (r) =>
+        eligible(r) ||
+        (stageOf(r) === "pilot" &&
+          r.status === "completed" &&
+          !r.withdrawn &&
+          !(r.integrity_issues || []).length &&
+          !r.historical);
+      const reviewLabel = (r) =>
+        eligible(r)
+          ? stageOf(r) === "pilot"
+            ? reviewerOf(r) === "agent"
+              ? "先导 · 机器核验"
+              : "先导 · 人工核验"
+            : "正式 · 人工复核"
+          : stageOf(r) === "pilot" && r.status === "completed"
+            ? "先导 · 待核验"
+            : stageOf(r) === "formal" &&
+                r.status === "completed" &&
+                reviewerOf(r) === "agent"
+              ? "正式 · 待人工复核"
+              : labels[runState(r)] || r.status;
+      const fmt = (x) =>
+        typeof x === "number" && Number.isFinite(x) ? x.toFixed(3) : "—";
+      const shortDate = (x) => String(x || "").slice(0, 10);
+      const nameOf = (id) =>
+        ({
+          controlled_synthetic: "受控合成机制",
+          engineering_verification: "离线工程核验",
+          "averimatec-pilot20": "AVerImaTeC · 20条先导（非正式）",
+        })[id] ||
+        (research.datasets || []).find((d) => d.id === id)?.name ||
+        id ||
+        "未指定";
+      const evidenceHtml = (items) =>
+        (items || [])
+          .map(
+            (e) =>
+              `<div class="evidence">${esc(e.path || e)}${e.line ? ":" + esc(e.line) : ""}<br><b>${esc(e.note || "")}</b></div>`,
+          )
+          .join("");
+      const runState = (r) =>
+        r.withdrawn
+          ? "withdrawn"
+          : (r.integrity_issues || []).length
+            ? "invalid"
+            : stageOf(r) === "engineering" && r.status === "completed"
+              ? "diagnostic"
+              : r.status === "completed" && !eligible(r)
+                ? "unreviewed"
+                : r.status;
+      let chartView = "version",
+        toastTimer;
+      function toast(t) {
+        $("#toast").textContent = t;
+        $("#toast").classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(
+          () => $("#toast").classList.remove("show"),
+          3000,
+        );
+      }
+      function saveBlob(name, text, type = "application/json") {
+        const u = URL.createObjectURL(new Blob([text], { type })),
+          a = document.createElement("a");
+        a.href = u;
+        a.download = name;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(u), 1000);
+      }
+      async function copy(t) {
+        try {
+          await navigator.clipboard.writeText(t);
+          toast("已复制");
+        } catch {
+          toast("复制不可用，请从指南中选择命令");
+        }
+      }
+      function safeStorage(k, v) {
+        try {
+          if (v === undefined) return localStorage.getItem(k);
+          localStorage.setItem(k, v);
+        } catch {
+          return null;
+        }
+      }
+      function renderOverview() {
+        const ms = audit.modules || [],
+          checks = ms.flatMap((m) => m.checks || []),
+          done = checks.filter((c) => c.done).length;
+        $("#header-date").textContent = shortDate(DATA.generated_at).replaceAll(
+          "-",
+          " / ",
+        );
+        $("#hero-summary").textContent =
+          research.summary || audit.summary || "当前研究实现与实验核查档案。";
+        $("#stage-summary").textContent =
+          `真实先导 ${pilotCompleted.length} 次（${pilotValid.length} 次已核验） · 有效正式实验 ${formalValid.filter((r) => r.kind !== "baseline").length} 次。机器运行核验不替代科学人工标注。`;
+        $("#stat-runs").innerHTML =
+          formalValid.filter((r) => r.kind !== "baseline").length +
+          "<small>次</small>";
+        $("#stat-baselines").innerHTML =
+          new Set(
+            valid
+              .filter((r) => r.kind === "baseline")
+              .map((r) => r.method_id || r.title || r.id),
+          ).size + "<small>项</small>";
+        $("#stat-checks").innerHTML =
+          done + "<small>/ " + checks.length + "</small>";
+        $("#readiness").textContent = formalValid.length
+          ? "已建立正式实验档案"
+          : pilotCompleted.length
+            ? "真实先导已有结果 · 正式实验准备中"
+            : "正式实验受阻 · 执行底座已有实现";
+        $("#module-summary").textContent =
+          `${ms.length} 个模块 · ${done} / ${checks.length} 项代码验收通过\n逐模块可展开查看验收项与证据`;
+        $("#audit-date").textContent =
+          "最近事实核查：" +
+          (research.audited_at || audit.audited_at || "2026-11-17");
+        $("#build-stamp").textContent =
+          "SNAPSHOT / " +
+          String(DATA.generated_at || "")
+            .replace("T", " ")
+            .slice(0, 19);
+        if (valid.length || pilotCompleted.length) {
+          $("#validity-note").textContent =
+            "先导结果只反映小样本运行，机器核验检查预测、日志与指标，不等于人工监督或正式实证。正式记录须人工复核；不同阶段不混比，旧撤回结果和工程诊断继续留档。";
+        }
+      }
+      function renderBlockers() {
+        const bs = (audit.blockers || []).filter(
+          (b) => !["resolved", "closed", "fixed"].includes(b.status),
+        );
+        $("#blocker-count").textContent = bs.length + " ITEMS";
+        const block = (b) =>
+          `<div class="blocker"><div class="blocker-row"><span class="severity">${esc(b.severity || "待办")}</span><div><div class="blocker-title">${esc(b.title)}</div><p>${esc(b.detail)}</p></div></div></div>`;
+        $("#priority-list").innerHTML =
+          bs.slice(0, 3).map(block).join("") ||
+          '<p class="small muted">暂无已登记阻塞项。</p>';
+        $("#all-blockers").innerHTML =
+          "<h3>全部阻塞与风险</h3>" +
+          bs.map((b) => block(b) + evidenceHtml(b.evidence)).join("");
+        $("#toggle-blockers").hidden = !bs.length;
+      }
+      function renderModules() {
+        $("#module-cards").innerHTML = (audit.modules || [])
+          .map((m, i) => {
+            const cs = m.checks || [],
+              done = cs.filter((c) => c.done).length,
+              pct = cs.length ? Math.round((done / cs.length) * 100) : 0;
+            return `<article class="glass frame module"><div class="module-top"><span class="module-number">MODULE / ${String(i + 1).padStart(2, "0")}</span>${chip(m.status)}</div><h3>${esc(m.title)}</h3><p class="module-scope">${esc(m.scope)}</p><div class="progress-meta"><span>代码验收 ${done} / ${cs.length}</span><strong>${pct}<small>%</small></strong></div><div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="${esc(m.title)}代码验收完成度"><i style="width:${pct}%"></i></div><p class="module-next"><span>下一步 / </span>${esc(m.next_action)}</p><details><summary>查看验收项与实现证据</summary><ul class="checks">${cs.map((c) => `<li><span class="check" aria-label="${c.done ? "已满足" : "未满足"}">${c.done ? "✓" : "○"}</span><span>${esc(c.label)}</span></li>`).join("")}</ul>${evidenceHtml(m.evidence)}</details></article>`;
+          })
+          .join("");
+      }
+      function renderData() {
+        const ds = (research.datasets || []).map(
+          (d) =>
+            `<article class="glass frame data-card"><div class="card-head"><h3>${esc(d.name)}</h3>${chip(d.status, { partial: "材料不齐", blocked: "未就绪", planned: "待接入" }[d.status])}</div><div class="data-counts">${(d.id ===
+            "averimatec"
+              ? [
+                  "train",
+                  "official_val_for_final_eval",
+                  "local_original_images",
+                  "quarantined_train_claims",
+                ].map((k) => [k, d.counts?.[k]])
+              : Object.entries(d.counts || {})
+            )
+              .filter(([, v]) => typeof v === "number")
+              .slice(0, 4)
+              .map(
+                ([k, v]) =>
+                  `<div><strong>${esc(v.toLocaleString())}</strong><span>${esc({ train: "训练元数据", val: "官方验证集", quarantined_train: "隔离训练样本", local_images: "本地原图", test: "测试集", total: "总计", official_val_for_final_eval: "官方最终评测元数据", local_original_images: "正式目录原图", quarantined_train_claims: "待隔离训练样本", local_claims: "本地声明", completed_runs: "完成运行", pilot_claims: "先导声明", claim_images: "声明原图", completed_real_runs: "完成真实运行", formal_eval_claims_used: "动用最终评测" }[k] || k)}</span></div>`,
+              )
+              .join(
+                "",
+              )}</div><p>${esc(d.split_note || d.detail || "暂无可用数据与划分记录。")}</p><details><summary>查看数据核查证据</summary>${evidenceHtml(d.evidence)}</details></article>`,
+        );
+        const env = research.environment || {},
+          verify = research.verification || {};
+        const envEntries = [
+          "python",
+          "torch",
+          "gpu",
+          "vram_total_mib",
+          "cuda_available",
+          "qwen_weights_present",
+          "precision_direction",
+        ]
+          .map((k) => [k, env[k]])
+          .filter(([, v]) => v !== undefined);
+        ds.push(
+          `<article class="glass frame data-card"><div class="card-head"><h3>本地运行条件</h3>${chip("diagnostic", "环境核查")}</div><dl class="metadata">${envEntries.map(([k, v]) => `<dt>${esc({ torch: "PyTorch", torch_version: "PyTorch", cuda_available: "CUDA 可用", gpu: "GPU", gpu_name: "GPU", python: "Python", python_version: "Python", qwen_weights: "Qwen 权重", qwen_local_weights: "Qwen 权重", gpu_memory_mib: "显存 / MiB", device: "设备", vram_total_mib: "显存 / MiB", qwen_weights_present: "Qwen 权重齐备", precision_direction: "量化方向" }[k] || k)}</dt><dd>${esc(typeof v === "boolean" ? (v ? "是" : "否") : v)}</dd>`).join("")}</dl><p>${esc(verify.summary || `离线测试：${verify.passed ?? "—"} 通过 / ${verify.skipped ?? "—"} 跳过。测试验证程序约束，不代表检测性能。`)}</p><details><summary>查看环境与测试证据</summary>${evidenceHtml(env.evidence)}${evidenceHtml(verify.evidence)}</details></article>`,
+        );
+        $("#dataset-cards").innerHTML = ds.join("");
+      }
+      function renderBaselines() {
+        const bs = [...(research.baselines || [])];
+        const ids = new Set(bs.map((b) => b.id));
+        for (const r of runs.filter((r) => r.kind === "baseline")) {
+          const id = r.method_id || r.series_id || r.id;
+          if (!ids.has(id)) {
+            ids.add(id);
+            bs.push({
+              id,
+              name: r.title || id,
+              status: "partial",
+              detail:
+                "由本地运行追加的对照。阶段与核验方式见记录；不代表论文复现。",
+              evidence: [],
+            });
+          }
+        }
+        $("#baseline-rows").innerHTML =
+          bs
+            .map((b) => {
+              const selected = selectedRuns().filter(
+                (r) =>
+                  r.kind === "baseline" &&
+                  (r.method_id === b.id ||
+                    r.series_id === b.id ||
+                    r.title === b.name),
+              );
+              const pending = runs
+                .filter(
+                  (r) =>
+                    r.kind === "baseline" &&
+                    r.dataset_id === $("#dataset-filter").value &&
+                    (r.method_id === b.id ||
+                      r.series_id === b.id ||
+                      r.title === b.name) &&
+                    metricsVisible(r) &&
+                    !eligible(r) &&
+                    (!$("#group-filter").value ||
+                      r.comparison_key === $("#group-filter").value),
+                )
+                .at(-1);
+              const latest = selected.at(-1) || pending;
+              return `<tr><td><div class="table-name">${esc(b.name)}</div></td><td>${chip(latest ? (eligible(latest) ? "reviewed" : "unreviewed") : b.status, latest ? reviewLabel(latest) : b.status === "partial" ? "代码待实测" : undefined)}</td><td><div class="table-note">${esc(latest ? `${stageName(latest)} · ${selected.length} 次同组核验运行。${eligible(latest) ? "论文方法忠实性另需核查。" : "原始指标待核验，不进入曲线。"}` : b.detail)}</div><details><summary>运行与复现证据</summary>${evidenceHtml(b.evidence)}${[...selected, ...(pending ? [pending] : [])].map((r) => `<p class="mono">${esc(r.id)}</p>`).join("")}</details></td><td class="table-value metric-value">${latest ? fmt(latest.metrics?.macro_f1) : "—"}${pending && !selected.length ? '<div class="small muted">待核验</div>' : ""}</td></tr>`;
+            })
+            .join("") ||
+          '<tr><td colspan="4" class="table-empty">尚未登记基线。完成本地复现后，按相同协议入库。</td></tr>';
+      }
+      function initFilters() {
+        const ds = research.datasets || [];
+        const ids = [
+          ...new Set([
+            ...ds.map((d) => d.id),
+            ...valid.map((r) => r.dataset_id),
+          ]),
+        ];
+        $("#dataset-filter").innerHTML =
+          ids
+            .map(
+              (id) => `<option value="${esc(id)}">${esc(nameOf(id))}</option>`,
+            )
+            .join("") || '<option value="">暂无运行数据集</option>';
+        const saved = safeStorage("research-dataset");
+        if (ids.includes(saved)) $("#dataset-filter").value = saved;
+        else if (valid.length)
+          $("#dataset-filter").value = valid.at(-1).dataset_id;
+        const metric = safeStorage("research-metric");
+        if (["macro_f1", "accuracy", "coverage", "risk"].includes(metric))
+          $("#metric-filter").value = metric;
+        updateGroups();
+      }
+      function updateGroups() {
+        const rs = valid.filter(
+          (r) => r.dataset_id === $("#dataset-filter").value,
+        );
+        const keys = [
+          ...new Set(rs.map((r) => r.comparison_key).filter(Boolean)),
+        ];
+        $("#group-filter").innerHTML = keys.length
+          ? keys
+              .map((k, i) => {
+                const r = rs.find((x) => x.comparison_key === k);
+                return `<option value="${esc(k)}">${esc(stageName(r))} · 组 ${i + 1} · ${esc(r.split_id || "固定划分")} · n=${esc(r.n_samples)} · ${esc(r.budget_id || "固定预算")}</option>`;
+              })
+              .join("")
+          : '<option value="">尚无已核验可比运行</option>';
+        renderChart();
+        renderBaselines();
+        renderComparison();
+      }
+      function selectedRuns() {
+        return valid
+          .filter(
+            (r) =>
+              r.dataset_id === $("#dataset-filter").value &&
+              r.comparison_key === $("#group-filter").value,
+          )
+          .sort(
+            (a, b) =>
+              String(a.finished_at || a.date || "").localeCompare(
+                String(b.finished_at || b.date || ""),
+              ) || a.id.localeCompare(b.id),
+          );
+      }
+      function metricOf(r, metric) {
+        return metric === "risk"
+          ? (r.metrics?.risk ?? r.metrics?.selective_risk)
+          : r.metrics?.[metric];
+      }
+      function renderChart() {
+        const metric = $("#metric-filter").value,
+          all = selectedRuns(),
+          rs = all.filter(
+            (r) =>
+              typeof metricOf(r, metric) === "number" &&
+              Number.isFinite(metricOf(r, metric)) &&
+              (chartView !== "cost" ||
+                typeof (r.metrics.cost_rmb ?? r.metrics.mean_cost_rmb) ===
+                  "number"),
+          );
+        const W = 680,
+          H = 270,
+          left = 48,
+          right = 22,
+          top = 22,
+          bottom = 43,
+          pw = W - left - right,
+          ph = H - top - bottom;
+        const ys = (v) => top + (1 - v) * ph;
+        let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="font-family:Georgia,SimSun,serif">`;
+        for (let i = 0; i <= 4; i++) {
+          const v = i / 4,
+            y = ys(v);
+          svg += `<line x1="${left}" x2="${W - right}" y1="${y}" y2="${y}" stroke="#c5d1c1" stroke-width=".6" stroke-dasharray="3 5"/><text x="${left - 10}" y="${y + 4}" text-anchor="end" fill="#596b62" font-size="10">${v.toFixed(2)}</text>`;
+        }
+        svg += `<line x1="${left}" x2="${left}" y1="${top}" y2="${H - bottom}" stroke="#9aaa94" stroke-width=".7"/><text x="${W - right}" y="${H - 5}" text-anchor="end" fill="#596b62" font-size="10">${chartView === "cost" ? "平均API实付 / 元" : "完成版本 / 独立运行"}</text>`;
+        let legends = [];
+        if (rs.length) {
+          const xs =
+            chartView === "cost"
+              ? rs.map((r) => r.metrics.cost_rmb ?? r.metrics.mean_cost_rmb)
+              : rs.map((_, i) => i);
+          const min = chartView === "cost" ? 0 : 0,
+            max = Math.max(...xs, chartView === "cost" ? 0.001 : 1),
+            xPos = (v) => left + 16 + ((v - min) / (max - min)) * (pw - 32);
+          const colors = [
+            "#2b6553",
+            "#98703a",
+            "#627a9f",
+            "#945f63",
+            "#6b7546",
+            "#7d6595",
+          ];
+          const series = [
+            ...new Set(
+              rs.map(
+                (r) =>
+                  `${r.kind === "baseline" ? "基线" : "方法"}:${r.series_id || r.method_id || r.title || r.kind}`,
+              ),
+            ),
+          ];
+          series.forEach((s, si) => {
+            const points = rs
+              .map((r, i) => ({ r, i }))
+              .filter(
+                ({ r }) =>
+                  `${r.kind === "baseline" ? "基线" : "方法"}:${r.series_id || r.method_id || r.title || r.kind}` ===
+                  s,
+              );
+            const color = colors[si % colors.length],
+              base = points[0].r.kind === "baseline";
+            if (points.length > 1)
+              svg += `<polyline points="${points.map(({ r, i }) => `${xPos(xs[i])},${ys(metricOf(r, metric))}`).join(" ")}" fill="none" stroke="${color}" stroke-width="2" ${base ? 'stroke-dasharray="6 5"' : ""}/>`;
+            points.forEach(({ r, i }) => {
+              const x = xPos(xs[i]),
+                y = ys(metricOf(r, metric));
+              svg += `<circle cx="${x}" cy="${y}" r="4.5" fill="${color}" stroke="#f6f8f1" stroke-width="2"><title>${esc(r.version)} · ${esc(r.id)}\n${esc(metric)}: ${metricOf(r, metric)}\nseed: ${esc(r.seed)}</title></circle>`;
+            });
+            legends.push(
+              `<span><i class="legend-color" style="background:${color}"></i>${esc(s.slice(s.indexOf(":") + 1))}${base ? " · 本地基线" : ""}</span>`,
+            );
+          });
+          const labelIndices =
+            rs.length <= 8
+              ? rs.map((_, i) => i)
+              : [
+                  0,
+                  ...Array.from({ length: 6 }, (_, i) =>
+                    Math.round(((i + 1) * (rs.length - 1)) / 7),
+                  ),
+                  rs.length - 1,
+                ];
+          labelIndices.forEach((i) => {
+            const x = xPos(xs[i]),
+              label =
+                chartView === "cost" ? Number(xs[i]).toFixed(3) : rs[i].version;
+            svg += `<text x="${x}" y="${H - bottom + 19}" text-anchor="middle" fill="#596b62" font-size="9">${esc(String(label).slice(0, 20))}</text>`;
+          });
+        }
+        svg += "</svg>";
+        $("#chart").innerHTML =
+          svg +
+          (!rs.length
+            ? `<div class="empty"><div class="eyebrow">AWAITING VERIFIED RUNS</div><div class="empty-title">${all.length ? "该指标暂无有效工作点" : "等待该组核验完成"}</div><p class="empty-note">${all.length ? "切换指标或补充对应成本记录。缺失指标保持为空。" : "已完成但待核验的先导指标可在档案中查看；完成对应阶段核验后才进入曲线。"}</p></div>`
+            : "");
+        $("#chart").setAttribute(
+          "aria-label",
+          rs.length
+            ? `${nameOf($("#dataset-filter").value)}，${stageName(rs[0])}，${metric}，${rs.length} 个已核验工作点`
+            : "当前实验组尚无已核验性能工作点",
+        );
+        $("#chart-count").textContent =
+          rs.length +
+          " 个已核验工作点" +
+          (rs.length && stageOf(rs[0]) === "pilot" ? " · 先导非正式" : "");
+        if (legends.length) $("#chart-legend").innerHTML = legends.join("");
+        else
+          $("#chart-legend").innerHTML =
+            '<span><i class="legend-stroke"></i>本方法 / 消融</span><span><i class="legend-stroke baseline"></i>已核验本地基线</span>';
+        const r = all[0];
+        $("#chart-rule").textContent = r
+          ? `${stageName(r)}${stageOf(r) === "pilot" ? "：小样本运行，不能替代正式实证。" : "。"}固定条件：${r.protocol_id} · ${r.model_id} · ${r.budget_id} · n=${r.n_samples}。连线仅表示版本记录次序。`
+          : "纳入条件：完成 + 对应阶段核验 + 产物校验通过。先导可机器核验，正式须人工复核；同阶段、数据、划分、模型与预算才可比较。";
+      }
+      function renderComparison() {
+        const rs = selectedRuns(),
+          bs = rs.filter((r) => r.kind === "baseline"),
+          select = $("#compare-baseline"),
+          old = select.value;
+        select.innerHTML = bs.length
+          ? bs
+              .map(
+                (r) =>
+                  `<option value="${esc(r.id)}">${esc(r.title || r.method_id || r.id)} · ${esc(r.version)}</option>`,
+              )
+              .join("")
+          : '<option value="">暂无同阶段同协议本地对照</option>';
+        if (bs.some((r) => r.id === old)) select.value = old;
+        updateDelta();
+      }
+      function updateDelta() {
+        const rs = selectedRuns(),
+          base = rs.find((r) => r.id === $("#compare-baseline").value),
+          method = rs.filter((r) => r.kind !== "baseline").at(-1),
+          metric = $("#metric-filter").value;
+        const a = method ? metricOf(method, metric) : undefined,
+          b = base ? metricOf(base, metric) : undefined;
+        $("#comparison-summary").textContent =
+          typeof a === "number" && typeof b === "number"
+            ? `${stageName(method)} · ${method.version} 相对 ${base.version}：${metric} ${a - b >= 0 ? "+" : ""}${((a - b) * 100).toFixed(2)} 个百分点（${fmt(a)} / ${fmt(b)}）。单次运行差值；不代表统计显著性。`
+            : "完成相同实验组的方法与基线后，此处显示指标差值。未复现基线保持为空。";
+      }
+      $("#compare-baseline").onchange = updateDelta;
+      function renderRecords() {
+        const q = $("#record-search").value.trim().toLowerCase(),
+          status = $("#status-filter").value;
+        const rs = allRuns
+          .filter((r) => {
+            const s = runState(r);
+            return (
+              (!q ||
+                JSON.stringify([r.id, r.version, r.title, r.dataset_id])
+                  .toLowerCase()
+                  .includes(q)) &&
+              (status === "all" ||
+                (status === "eligible" ? eligible(r) : s === status))
+            );
+          })
+          .sort((a, b) =>
+            String(b.finished_at || b.date || b.started_at || "").localeCompare(
+              String(a.finished_at || a.date || a.started_at || ""),
+            ),
+          );
+        $("#record-count").textContent = rs.length + " 条记录";
+        $("#record-rows").innerHTML =
+          rs
+            .map((r) => {
+              const idx = allRuns.indexOf(r),
+                s = runState(r);
+              return `<tr><td><div class="table-name">${esc(r.version || r.id)}</div><div class="table-note">${esc(r.title || r.detail)}</div></td><td>${esc(r.dataset_id ? nameOf(r.dataset_id) : "工程 / 历史诊断")}<div class="table-note">${esc(stageName(r))} · ${r.n_samples ? "n = " + esc(r.n_samples) : esc(r.scope || "不计正式成绩")}</div></td><td>${chip(s, r.withdrawn || (r.integrity_issues || []).length ? undefined : reviewLabel(r))}</td><td class="metric-value">${metricsVisible(r) ? fmt(r.metrics?.macro_f1) : "—"}${metricsVisible(r) && !eligible(r) ? '<div class="small muted">待核验原始指标</div>' : ""}</td><td><div class="small muted">${esc(shortDate(r.finished_at || r.date || r.started_at))}</div><button class="text-button" data-detail="${idx}">展开复现档案 ↗</button></td></tr>`;
+            })
+            .join("") ||
+          '<tr><td colspan="5" class="table-empty">没有匹配记录。调整筛选，或登记下一版实验。</td></tr>';
+        $$("[data-detail]").forEach(
+          (b) =>
+            (b.onclick = () => showDetail(allRuns[Number(b.dataset.detail)])),
+        );
+      }
+      function showDetail(r) {
+        $("#detail-title").textContent = r.title || r.id;
+        const fields = {
+          版本: r.version,
+          记录ID: r.id,
+          状态:
+            r.withdrawn || (r.integrity_issues || []).length
+              ? labels[runState(r)] || r.status
+              : reviewLabel(r),
+          实验阶段: stageName(r),
+          说明: r.detail,
+          数据集: r.dataset_id,
+          数据版本: r.dataset_revision,
+          划分: r.split_id,
+          划分SHA256: r.split_sha256,
+          评测协议: r.protocol_id,
+          冻结模型: r.model_id,
+          预算: r.budget_id,
+          样本量: r.n_samples,
+          随机种子: r.seed,
+          复核: r.review_status,
+          核验类型:
+            reviewerOf(r) === "agent"
+              ? "机器运行核验（不替代科学人工监督）"
+              : reviewerOf(r) === "human"
+                ? "具名人工复核"
+                : "待核验",
+          核验者: r.reviewer,
+          核验说明: r.review_note,
+          完整性检查: (r.integrity_issues || []).join("；") || undefined,
+          运行失败原因: r.failure_reason,
+          运行命令: Array.isArray(r.command) ? r.command.join(" ") : r.command,
+          源码指纹: r.code_fingerprint,
+          比较组: r.comparison_key,
+          撤回原因:
+            r.withdrawal_reason ||
+            r.withdraw_reason ||
+            r.withdrawn_reason ||
+            (DATA.events || [])
+              .filter((e) => e.type === "withdrawn" && e.run_id === r.id)
+              .at(-1)?.reason,
+        };
+        $("#detail-body").innerHTML =
+          '<div class="record-detail"><dl>' +
+          Object.entries(fields)
+            .filter(([, v]) => v !== undefined && v !== null)
+            .map(
+              ([k, v]) =>
+                `<dt>${esc(k)}</dt><dd class="${k.includes("SHA") || k.includes("指纹") || k === "比较组" ? "mono" : ""}">${esc(typeof v === "object" ? JSON.stringify(v) : v)}</dd>`,
+            )
+            .join("") +
+          "</dl></div>" +
+          (metricsVisible(r)
+            ? `<h3>${eligible(r) ? "本次已核验指标" : "原始报告指标 · 待核验"}</h3><p>${stageOf(r) === "pilot" ? "先导非正式；" : ""}${eligible(r) ? reviewLabel(r) : "尚未核验，不进入性能曲线"}。</p><pre>` +
+              esc(JSON.stringify(r.metrics, null, 2)) +
+              "</pre>"
+            : "<p>此记录未进入已核验性能曲线。</p>") +
+          evidenceHtml(r.evidence) +
+          Object.entries(r.artifact_checksums || {})
+            .map(
+              ([k, v]) =>
+                `<div class="evidence">${esc(k)} · ${esc(r.artifacts?.[k] || "")}<br>${esc(typeof v === "object" ? JSON.stringify(v) : v)}</div>`,
+            )
+            .join("");
+        $("#detail-dialog").showModal();
+      }
+      function renderWebPilot() {
+        const pilot = research.open_web_pilot;
+        if (!pilot?.rows?.length) return;
+        const run = runs.find((entry) => entry.id === pilot.run_id);
+        if (run?.status !== "completed" || run.withdrawn || run.integrity_issues?.length) return;
+        const section = $("#web-pilot");
+        const verdict = {
+          Supported: "支持", Refuted: "反驳",
+          "Not Enough Evidence": "证据不足",
+          "Conflicting Evidence/Cherrypicking": "证据冲突或断章取义",
+        };
+        const origin = {
+          textual_primary_record: "找到原始文字记录",
+          explicit_textual_attribution: "查到网页给出的来源归因",
+          unresolved: "未能查清",
+          no_admissible_evidence: "没有合格日期的证据",
+        };
+        function webLink(url, text) {
+          try {
+            const parsed = new URL(url);
+            if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return esc(text);
+            return `<a href="${esc(parsed.href)}" target="_blank" rel="noopener noreferrer">${esc(text)}</a>`;
+          } catch {
+            return esc(text);
+          }
+        }
+        const summary = pilot.summary;
+        $("#web-pilot-summary").textContent =
+          `${summary.with_any_evidence} / ${pilot.rows.length} 条有符合日期规则的网页片段，${summary.confirmed} 条查到文字来源归因。共有 ${summary.verdict_changes} 条改判，其中 ${summary.confirmed_textual_source_and_changed} 条查到了文字来源归因。`;
+        $("#web-pilot-note").textContent =
+          "来源归因限于网页给出的记录或署名。追查阶段也有新增网页，所以改判不能单独归因于来源归因。耗时为各次调用相加，网页并行请求的实际墙钟耗时会不同。";
+        $("#web-pilot-rows").innerHTML = pilot.rows.map((row) => {
+          const links = row.evidence.map((entry) => `<li>${webLink(entry.url, entry.title)} <span class="muted">${esc(entry.date)} · ${entry.stage === "initial" ? "初搜" : "追查"}</span></li>`).join("");
+          const query = row.queries.map((item) => `<div class="table-note">${esc(item)}</div>`).join("");
+          const fetches = row.retrieved.map((entry) => `<li>${webLink(entry.url, entry.title)} <span class="muted">${esc(entry.status)}</span></li>`).join("");
+          return `<tr>
+            <td><strong>${esc(row.id)}</strong><div class="table-note">${esc(row.claim)}</div></td>
+            <td>${links ? `<ul>${links}</ul>` : "无可进入判定的网页片段"}<details><summary>查询与抓取记录</summary>${query}${fetches ? `<ul>${fetches}</ul>` : ""}</details></td>
+            <td>${esc(origin[row.source_status] || row.source_status)}${row.source_note ? `<div class="table-note">${esc(row.source_note)}</div>` : ""}</td>
+            <td>${esc(verdict[row.before] || row.before)} → ${esc(verdict[row.after] || row.after)}<div class="table-note">${row.changed ? "有变化" : "相同"}</div></td>
+            <td>搜索 ${esc(row.calls.search)} · 网页 ${esc(row.calls.page)} · 模型 ${esc(row.calls.vlm)}<div class="table-note">累计 ${row.seconds.toFixed(2)} 秒</div><details><summary>分项耗时</summary><div class="table-note">搜索 ${row.timings.search.toFixed(2)} 秒<br>网页 ${row.timings.page.toFixed(2)} 秒<br>模型 ${row.timings.vlm.toFixed(2)} 秒</div></details></td>
+          </tr>`;
+        }).join("");
+        $("#web-pilot-csv").href = pilot.csv_path;
+        $("#web-pilot-report").href = pilot.report_path;
+        section.hidden = false;
+        $("#web-pilot-nav").hidden = false;
+      }
+      function renderMilestones() {
+        const fallback = [
+          {
+            title: "修复关键方法缺口",
+            status: "active",
+            description:
+              "补齐规则通路、来源隔离与空返回约束，并复查九项审查问题。",
+          },
+          {
+            title: "完成真实材料与模型冒烟",
+            status: "pending",
+            description:
+              "冻结事件划分，准备人工标注、原图、真实快照及 Qwen 4bit 环境。",
+          },
+          {
+            title: "跑通复现基线与小规模闭环",
+            status: "pending",
+            description: "同模型、同预算建立可回放基线，核验成本和逐样本证据。",
+          },
+          {
+            title: "正式评估与逐版改进",
+            status: "pending",
+            description: "锁定配置后完成全量评测，再登记消融和版本对比。",
+          },
+        ];
+        $("#milestones").innerHTML = (
+          audit.milestones?.length ? audit.milestones : fallback
+        )
+          .map(
+            (m, i) =>
+              `<article class="milestone ${i === 0 ? "active" : ""}"><div class="eyebrow">STEP ${String(i + 1).padStart(2, "0")} / ${esc(labels[m.status] || m.status || "待完成")}</div><h3>${esc(m.title)}</h3><p>${esc(m.description)}</p></article>`,
+          )
+          .join("");
+      }
+      $("#dataset-filter").onchange = () => {
+        safeStorage("research-dataset", $("#dataset-filter").value);
+        updateGroups();
+      };
+      $("#metric-filter").onchange = () => {
+        safeStorage("research-metric", $("#metric-filter").value);
+        renderChart();
+        renderComparison();
+      };
+      $("#group-filter").onchange = () => {
+        renderChart();
+        renderBaselines();
+        renderComparison();
+      };
+      $$("[data-view]").forEach(
+        (b) =>
+          (b.onclick = () => {
+            chartView = b.dataset.view;
+            $$("[data-view]").forEach((x) => {
+              x.classList.toggle("selected", x === b);
+              x.setAttribute("aria-pressed", String(x === b));
+            });
+            renderChart();
+          }),
+      );
+      $("#record-search").oninput = renderRecords;
+      $("#status-filter").onchange = renderRecords;
+      $("#toggle-blockers").onclick = () => {
+        const n = $("#all-blockers"),
+          open = n.hidden;
+        n.hidden = !open;
+        $("#toggle-blockers").setAttribute("aria-expanded", String(open));
+        $("#toggle-blockers").textContent = open
+          ? "收起全部阻塞项 ↑"
+          : "查看全部阻塞项 ↗";
+        if (open)
+          n.scrollIntoView({
+            block: "nearest",
+            behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "instant"
+              : "smooth",
+          });
+      };
+      $$("[data-guide]").forEach(
+        (b) => (b.onclick = () => $("#guide-dialog").showModal()),
+      );
+      $$("[data-close]").forEach(
+        (b) => (b.onclick = () => b.closest("dialog").close()),
+      );
+      $$("dialog").forEach((d) =>
+        d.addEventListener("click", (e) => {
+          if (e.target === d) {
+            const r = d.getBoundingClientRect();
+            if (
+              e.clientX < r.left ||
+              e.clientX > r.right ||
+              e.clientY < r.top ||
+              e.clientY > r.bottom
+            )
+              d.close();
+          }
+        }),
+      );
+      $("#copy-build").onclick = () => copy("python tools/progress.py build");
+      $("#export-json").onclick = () =>
+        saveBlob(
+          "研究进度档案-" + shortDate(DATA.generated_at) + ".json",
+          JSON.stringify(DATA, null, 2),
+        );
+      $("#export-csv").onclick = () => {
+        const cols = [
+          "id",
+          "version",
+          "status",
+          "kind",
+          "experiment_stage",
+          "reviewer_kind",
+          "review_status",
+          "dataset_id",
+          "protocol_id",
+          "model_id",
+          "budget_id",
+          "n_samples",
+          "seed",
+          "macro_f1",
+          "accuracy",
+          "coverage",
+          "risk",
+          "eligible",
+          "finished_at",
+        ];
+        const cell = (v) => '"' + String(v ?? "").replaceAll('"', '""') + '"';
+        const rows = allRuns.map((r) =>
+          cols
+            .map((k) =>
+              cell(
+                ["macro_f1", "accuracy", "coverage", "risk"].includes(k)
+                  ? metricsVisible(r)
+                    ? metricOf(r, k)
+                    : ""
+                  : k === "eligible"
+                    ? eligible(r)
+                    : r[k],
+              ),
+            )
+            .join(","),
+        );
+        saveBlob(
+          "实验运行档案.csv",
+          "\uFEFF" + [cols.join(","), ...rows].join("\r\n"),
+          "text/csv;charset=utf-8",
+        );
+      };
+      $("#download-template").onclick = () => {
+        const example = DATA.run_template || {
+          id: "请填写唯一运行ID",
+          version: "v0.1",
+          title: "方法首次正式评测",
+          status: "completed",
+          experiment_stage: "formal",
+          kind: "method",
+          review_status: "unreviewed",
+          dataset_id: "averimatec",
+          dataset_revision: "填写数据SHA256",
+          split_id: "填写冻结划分版本",
+          split_sha256: "填写划分SHA256",
+          protocol_id: "填写协议版本",
+          model_id: "填写冻结模型指纹",
+          budget_id: "填写预算版本",
+          n_samples: 152,
+          seed: 42,
+          command: ["python", "-m", "your_experiment"],
+          config_path: "config/your_experiment.json",
+          artifacts: {
+            report: "outputs/your-run/report.json",
+            predictions: "outputs/your-run/predictions.json",
+            config: "config/your_experiment.json",
+            split: "data/annotations/experiment_split.json",
+          },
+          metrics: {},
+          metrics_report: "outputs/your-run/report.json",
+        };
+        saveBlob("my-run.json", JSON.stringify(example, null, 2));
+        toast("已下载清单；请按更新文档补全真实材料");
+      };
+      renderOverview();
+      renderBlockers();
+      renderModules();
+      renderData();
+      renderWebPilot();
+      initFilters();
+      renderRecords();
+      renderMilestones();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const hits = entries
+            .filter((e) => e.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          if (hits.length) {
+            const id = hits[0].target.id;
+            $$(".rail nav a").forEach((a) =>
+              a.classList.toggle("active", a.getAttribute("href") === "#" + id),
+            );
+          }
+        },
+        { rootMargin: "-12% 0px -55% 0px", threshold: [0, 0.1, 0.4] },
+      );
+      $$("section[id]").forEach((s) => observer.observe(s));
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        $("#storage-mode").textContent = "本地档案 · 自动刷新";
+        setInterval(async () => {
+          try {
+            const r = await fetch("/progress/data.json", { cache: "no-store" });
+            if (!r.ok) return;
+            const next = await r.json();
+            if (
+              next.content_fingerprint &&
+              DATA.content_fingerprint &&
+              next.content_fingerprint !== DATA.content_fingerprint
+            ) {
+              if ($$("dialog[open]").length) {
+                toast("档案已更新，关闭对话框后刷新查看");
+                return;
+              }
+              location.reload();
+            }
+          } catch {}
+        }, 15000);
+      }
+    </script>
+  </body>
+</html>

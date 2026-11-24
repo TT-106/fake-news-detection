@@ -1,0 +1,9 @@
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+
+# 运行协议对 JSON 原始字节计算 SHA-256。
+*.json -text whitespace=cr-at-eol
+
+# 统一 diff 的上下文行需要保留前导空格。
+*.patch -whitespace

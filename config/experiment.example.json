@@ -1,0 +1,24 @@
+{
+  "model_dir": "models/Qwen2.5-VL-7B-Instruct",
+  "quantization": "bnb4",
+  "max_pixels": 401408,
+  "image_dir": "data/averimatec/images",
+  "source_annotations": "data/annotations/source.jsonl",
+  "quality_annotations": "data/annotations/quality.jsonl",
+  "sufficiency_annotations": "data/annotations/sufficiency.jsonl",
+  "experiment_split": "data/annotations/experiment_split.json",
+  "archived_tools": "data/open_web/tool_manifest.json",
+  "sufficiency_threshold": 0.6,
+  "output_reserve_rmb": 0.02,
+  "budget_rmb": 0.25,
+  "gamma": 1.0,
+  "training_history_depth": 1,
+  "quality_cost_budgets": [
+    0.14,
+    0.25
+  ],
+  "source_eval_annotations": null,
+  "spatiotemporal_masks": null,
+  "note": "仅为字段示例，不代表材料与阈值已锁定。实际bnb4参数与模型身份由适配器明确冻结。rule_manifest需真实逻辑关系证明与双人复核；暂无目录则无可靠规则，不添加通用规则。",
+  "rule_manifest": null
+}

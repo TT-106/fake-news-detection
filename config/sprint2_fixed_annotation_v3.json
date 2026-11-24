@@ -1,0 +1,20 @@
+{
+  "protocol": "SPRINT2_FIXED_ANNOTATION_V3",
+  "split": "data/annotations/experiment_split.json",
+  "output": "outputs/sprint2-fixed-20261122/acquisition-v3",
+  "model_dir": "models/Qwen2.5-VL-7B-Instruct",
+  "model_revision": "f085f4d94b3827639c67f7664ac5c1d6c88d9354b8e326ffa7b16659e14fe1aa",
+  "max_pixels": 200704,
+  "max_new_tokens": 1024,
+  "embedder": "models/all-MiniLM-L6-v2",
+  "store": "data/averimatec/knowledge_store/train/text_related.zip",
+  "ks_sha256": "6c4e8e2c92e3c352e61c0ae447da0da619e18c8e9c33f269ddfee7310eba6eb9",
+  "ks_version": "averimatec-official-ks-strict-provenance-v2",
+  "initial_k": 4,
+  "initial_ris_k": 2,
+  "mmr_lambda": 0.65,
+  "acquisition_version": "QP_OBSERVED_MEAN_NAMED_SCORES_V3",
+  "state_rule": "Before human LR fitting, compute the QP with mean observed quality features per atom and maximum of direct reference, verified shared provenance and character overlap for soft source affinity. Preserve all component measurements. Independently fit shared T on 15 calibration-only predictions after logits freeze.",
+  "task_sampling": "One source pair of greatest observed soft affinity per eligible claim (stable ties in retrieved order). Preserve all candidates privately. One quality target per fit claim, cycle through ranked passages and atomic claims by numeric order. One actual terminal history per fit claim. Sample three fit plus two validation cases for trial, then use the same fixed objects in the full package.",
+  "decoder": "lm-format-enforcer==0.11.3; schema included in multimodal input, named five-channel integer ratings; native single-token terminal logits"
+}

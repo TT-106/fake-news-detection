@@ -1,0 +1,8 @@
+{
+  "scope": "ENGINEERING_FIRST_PILOT_INPUT_ONLY",
+  "claim_ids": [
+    "train:111"
+  ],
+  "parent_split": "config/pilot_split_20261117.json",
+  "parent_split_sha256": "f9a9ab2d9af5814ccfeabf055ae6be323669775ab797fda401f47e905d8f4e07"
+}

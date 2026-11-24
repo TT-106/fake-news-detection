@@ -1,0 +1,111 @@
+--- a/eval/fire/verify_atomic_claim.py
++++ b/fire_controller.dependencies_injected.py
+@@ -1,25 +1,14 @@
+-"""
+-Rates a single atomic claim for accuracy.
+-For each atomic claim, the process would be to prompt the model think of the search term to obtain relevant information,
+-and then let the model decide if the information is enough to make a judgement or the model needs to continue searching.
+-"""
+-
++from __future__ import annotations
+ import dataclasses
+-import torch
+ from typing import Any
+-from common import modeling, shared_config, utils
+-from eval.fire import config as fire_config
+-from eval.fire import query_serper
+-from eval.fire.query_serper import SerperAPI
+-from sentence_transformers import SentenceTransformer, util
+-
+-device = "cuda" if torch.cuda.is_available() else "cpu"
+-sbert_model = SentenceTransformer('all-MiniLM-L6-v2').to(device)
++
+ _Factual_LABEL = 'True'
++
+ _Non_Factual_LABEL = 'False'
++
+ _STATEMENT_PLACEHOLDER = '[STATEMENT]'
++
+ _KNOWLEDGE_PLACEHOLDER = '[KNOWLEDGE]'
+-
+ 
+ _FINAL_ANSWER_OR_NEXT_SEARCH_FORMAT = f"""\
+ Instructions:
+@@ -48,7 +37,6 @@
+ {_STATEMENT_PLACEHOLDER}
+ """
+ 
+-
+ _MUST_HAVE_FINAL_ANSWER_FORMAT = f"""\
+ Instructions:
+ 1. You are provided with a STATEMENT and relevant KNOWLEDGE points.
+@@ -68,45 +56,15 @@
+ {_STATEMENT_PLACEHOLDER}
+ """
+ 
+-
+-
+ @dataclasses.dataclass()
+ class GoogleSearchResult:
+     query: str
+     result: str
+ 
+-
+ @dataclasses.dataclass()
+ class FinalAnswer:
+     response: str
+     answer: str
+-
+-
+-def call_search(
+-        search_query: str,
+-        search_type: str = fire_config.search_type,
+-        num_searches: int = fire_config.num_searches,
+-        serper_api_key: str = shared_config.serper_api_key,
+-        search_postamble: str = '',  # ex: 'site:https://en.wikipedia.org'
+-) -> str:
+-    """Call Google Search to get the search result."""
+-    search_query += f' {search_postamble}' if search_postamble else ''
+-
+-    if search_type == 'serper':
+-        serper_searcher = query_serper.SerperAPI(serper_api_key, k=num_searches)
+-        return serper_searcher.run(search_query, k=num_searches)
+-    else:
+-        raise ValueError(f'Unsupported search type: {search_type}')
+-
+-def get_sentence_similarity(new_sent, sentences, threshold=0.9):
+-    if len(sentences) == 0:
+-        return 0
+-    single_embedding  = sbert_model.encode(new_sent, convert_to_tensor=True).to(torch.device('cuda'))
+-    list_embeddings = sbert_model.encode(sentences, convert_to_tensor=True).to(torch.device('cuda'))
+-    similarities = util.cos_sim(single_embedding, list_embeddings)
+-
+-    count_above_threshold = sum(1 for i in range(len(sentences)) if similarities[0][i].item() > threshold)
+-    return count_above_threshold
+ 
+ def final_answer_or_next_search(
+         atomic_claim: str,
+@@ -166,7 +124,7 @@
+     else:
+         print(f"Unexpected output: {answer_or_next_query}")
+         return None, None
+-    
++
+ def must_get_final_answer(
+         atomic_fact: str,
+         searches: list[GoogleSearchResult],
+@@ -208,7 +166,6 @@
+         # General exception handling for unexpected errors
+         print(f"Error in must_get_final_answer: {e}")
+         return None, None
+-
+ 
+ def verify_atomic_claim(
+         atomic_claim: str,
+@@ -270,6 +227,3 @@
+         'google_searches': [dataclasses.asdict(s) for s in search_results]
+     }
+     return final_answer, search_dicts, total_usage
+-
+-if __name__ == '__main__':
+-    pass

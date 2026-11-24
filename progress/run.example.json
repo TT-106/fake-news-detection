@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "replace-with-unique-run-id",
+  "version": "v-next",
+  "title": "待执行的正式实验（此清单不是结果）",
+  "status": "running",
+  "experiment_stage": "formal",
+  "kind": "method",
+  "method_id": "full_method",
+  "series_id": "full_method",
+  "started_at": "2026-11-17T00:00:00+08:00",
+  "review_status": "unreviewed",
+  "dataset_id": "averimatec",
+  "dataset_revision": "replace-with-verified-data-revision",
+  "split_id": "replace-with-reviewed-event-split",
+  "split_sha256": "replace-with-sha256-of-the-split-file",
+  "protocol_id": "replace-with-locked-evaluation-protocol-revision",
+  "model_id": "replace-with-frozen-model-and-quantization-revision",
+  "budget_id": "replace-with-locked-tool-and-token-budget",
+  "n_samples": 1,
+  "seed": 42,
+  "command": ["python", "replace-with-your-experiment-entry.py"],
+  "config_path": "config/replace-with-real-experiment.json",
+  "metrics": {},
+  "artifacts": {
+    "report": "outputs/replace-with-unique-run-id/report.json",
+    "predictions": "outputs/replace-with-unique-run-id/predictions.jsonl",
+    "config": "config/replace-with-real-experiment.json",
+    "split": "outputs/replace-with-reviewed-event-split.json"
+  }
+}

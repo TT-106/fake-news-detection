@@ -1,0 +1,16 @@
+{
+  "protocol_id": "QWEN_TRAIN_PILOT_DIRECT_V1",
+  "experiment_stage": "pilot",
+  "seed": 42,
+  "model_dir": "models/Qwen2.5-VL-7B-Instruct",
+  "quantization": "bnb4",
+  "max_pixels": 200704,
+  "max_new_tokens": 512,
+  "input_mode": "image_text",
+  "split_path": "config/pilot_split_20261117.json",
+  "output_dir": "outputs/pilot/qwen-direct-image_text-v1",
+  "retrieval": "none",
+  "temperature_calibration": "not_fitted_argmax_only",
+  "formal_evaluation": false,
+  "note": "真实零检索先导对照；没有人工充分性门控或外部证据，不是正式E1—E4。"
+}

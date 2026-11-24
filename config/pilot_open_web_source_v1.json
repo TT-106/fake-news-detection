@@ -1,0 +1,18 @@
+{
+  "protocol_id": "TRAIN_PILOT_REAL_WEB_SOURCE_V1",
+  "seed": 42,
+  "split_path": "config/pilot_split_20261117.json",
+  "output_dir": "outputs/pilot/open-web-source-v1",
+  "model_dir": "models/Qwen2.5-VL-7B-Instruct",
+  "quantization": "bnb4",
+  "max_pixels": 200704,
+  "initial_searches_per_claim": 1,
+  "source_searches_per_claim": 1,
+  "page_attempts_per_search_stage": 3,
+  "max_excerpt_chars": 720,
+  "publication_rule": "Strictly earlier than public claim date, verified per retrieved page. Same-day, uncertain and later pages are logged and excluded from model evidence.",
+  "input_rule": "Public caption, original images, time and location only. Search terms manually condensed from the caption. Source follow-up uses original-record, author, or image-credit clues. Reference QA, fact-check answers and labels are sealed off from retrieval and prediction.",
+  "source_confirmation": "Textual evidence lineage requires a direct, attributable public record, or explicit common origin or reprint attribution. Exact visual asset attribution requires comparison with an actual source image. Distinct domains alone prove neither independence nor common source.",
+  "comparison": "Before: initial admissible excerpts; after: same initial excerpts plus admissible follow-up excerpts and supported attribution notes. Any change is a paired descriptive outcome. Only confirmed-source cases separately assessed; additional evidence can affect the decision.",
+  "formal_evaluation": false
+}

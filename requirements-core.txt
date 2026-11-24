@@ -1,0 +1,6 @@
+# 当前环境中实际验证的数值/测试依赖；不安装模型，不配置 CUDA。
+numpy==2.4.4
+scipy==1.17.1
+scikit-learn==1.8.0
+Pillow==12.2.0
+pytest==9.0.3
